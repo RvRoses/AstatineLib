@@ -135,4 +135,3 @@ function AstatineLib:CreateWindow(settings)
 end
 
 return AstatineLib
-```[cite: 5]
