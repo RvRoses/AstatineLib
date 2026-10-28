@@ -82,7 +82,6 @@ function AstatineLib:CreateWindow(settings)
     
     AstatineLib:CreateCorner(MainFrame, 10)
     
-    -- Subtle Top Accent Bar with Light Blue Gradient
     local TopBar = AstatineLib:Create("Frame", {
         Name = "TopBar",
         Parent = MainFrame,
@@ -92,7 +91,6 @@ function AstatineLib:CreateWindow(settings)
     })
     AstatineLib:CreateCorner(TopBar, 10)
     
-    -- Fix bottom corners of top bar to be sharp
     local TopBarFix = AstatineLib:Create("Frame", {
         Parent = TopBar,
         BackgroundColor3 = AstatineLib.Theme.Accent,
@@ -118,7 +116,6 @@ function AstatineLib:CreateWindow(settings)
         TextXAlignment = Enum.TextXAlignment.Left
     })
 
-    -- Container for Tabs/Elements
     local Container = AstatineLib:Create("Frame", {
         Parent = MainFrame,
         BackgroundColor3 = AstatineLib.Theme.DarkBackground,
@@ -128,10 +125,53 @@ function AstatineLib:CreateWindow(settings)
     })
     AstatineLib:CreateCorner(Container, 8)
 
-    return {
-        Holder = Container,
-        WindowFrame = MainFrame
-    }
+    -- Window Object with methods
+    local WindowObj = {}
+    
+    function WindowObj:CreateTab(tabSettings)
+        local TabName = tabSettings.Name or "Tab"
+        
+        local TabFrame = AstatineLib:Create("ScrollingFrame", {
+            Name = TabName .. "Tab",
+            Parent = Container,
+            BackgroundTransparency = 1,
+            Size = UDim2.new(1, 0, 1, 0),
+            CanvasSize = UDim2.new(0, 0, 2, 0),
+            ScrollBarThickness = 4,
+            Visible = true
+        })
+        
+        AstatineLib:Create("UIListLayout", {
+            Parent = TabFrame,
+            SortOrder = Enum.SortOrder.LayoutIndex,
+            Padding = UDim.new(0, 8)
+        })
+        
+        local SectionObj = {}
+        function SectionObj:CreateButton(btnSettings)
+            local Btn = AstatineLib:Create("TextButton", {
+                Parent = TabFrame,
+                BackgroundColor3 = AstatineLib.Theme.Accent,
+                Size = UDim2.new(1, 0, 0, 32),
+                Font = Enum.Font.GothamBold,
+                Text = btnSettings.Name or "Button",
+                TextColor3 = Color3.fromRGB(255, 255, 255),
+                TextSize = 13,
+                AutoButtonColor = true
+            })
+            AstatineLib:CreateCorner(Btn, 6)
+            
+            Btn.MouseButton1Click:Connect(function()
+                if btnSettings.Callback then
+                    pcall(btnSettings.Callback)
+                end
+            end)
+        end
+        
+        return SectionObj
+    end
+
+    return WindowObj
 end
 
 return AstatineLib
